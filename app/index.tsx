@@ -7,99 +7,97 @@ export default function Index() {
 
   const [inputText, setInputText] = useState("");
   const [displayText, setDisplayText] = useState("");
-  const [sentiment, setSentiment] = useState(null);  // State to store sentiment
-  const [error, setError] = useState(null);  // State for handling errors
-  const [negativeSentiment, setNegativeSentiment] = useState(null);  // State for storing Negative sentiment
+  const [sentiment, setSentiment] = useState(null); 
+  const [error, setError] = useState(null);  
+  const [negativeSentiment, setNegativeSentiment] = useState(null);  
   const [positiveSentiment, setPositiveSentiment] = useState(null);
   const [neutralSentiment, setNeutralSentiment] = useState(null);
   const [overallSentiment, setOverallSentiment] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState<string | null>(null); // Whether animation should be running
+  const [isAnalyzing, setIsAnalyzing] = useState<string | null>(null); 
 
-  const [dotColor1] = useState(new Animated.Value(0)); // For left dot color
-  const [dotColor2] = useState(new Animated.Value(0)); // For middle dot color
-  const [dotColor3] = useState(new Animated.Value(0)); // For right dot color
-  const animationLoop = useRef<Animated.CompositeAnimation | null>(null); // Type it as CompositeAnimation or null
+  const [dotColor1] = useState(new Animated.Value(0)); 
+  const [dotColor2] = useState(new Animated.Value(0)); 
+  const [dotColor3] = useState(new Animated.Value(0)); 
+  const animationLoop = useRef<Animated.CompositeAnimation | null>(null); 
 
-  // Function to animate the dots (fade in/out and color change)
+  
   const animateDots = () => {
-    // Animate the dots in sequence
+    
     animationLoop.current = Animated.loop(
       Animated.sequence([
-        // Fade in dots to white (using color change)
+      
         Animated.parallel([
           Animated.timing(dotColor1, {
-            toValue: 1, // 1 means white
+            toValue: 1, 
             duration: 500,
-            useNativeDriver: false, // Color animations do not support native driver
+            useNativeDriver: false, 
           }),
           Animated.timing(dotColor2, {
-            toValue: 1, // 1 means white
+            toValue: 1, 
             duration: 500,
             useNativeDriver: false,
           }),
           Animated.timing(dotColor3, {
-            toValue: 1, // 1 means white
+            toValue: 1, 
             duration: 500,
             useNativeDriver: false,
           }),
         ]),
-        // Fade out dots to black (using color change)
+    
         Animated.parallel([
           Animated.timing(dotColor1, {
-            toValue: 0, // 0 means black
+            toValue: 0, 
             duration: 500,
             useNativeDriver: false,
           }),
           Animated.timing(dotColor2, {
-            toValue: 0, // 0 means black
+            toValue: 0, 
             duration: 500,
             useNativeDriver: false,
           }),
           Animated.timing(dotColor3, {
-            toValue: 0, // 0 means black
+            toValue: 0, 
             duration: 500,
             useNativeDriver: false,
           }),
         ]),
       ])
     )
-    // Start the animation loop
     animationLoop.current.start();
   };
 
-  // Interpolate the color values from 0 (black) to 1 (white)
   const dotInterpolation1 = dotColor1.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#000', '#fff'], // Black to white color
+    outputRange: ['#000', '#fff'], 
   });
 
   const dotInterpolation2 = dotColor2.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#000', '#fff'], // Black to white color
+    outputRange: ['#000', '#fff'],
   });
 
   const dotInterpolation3 = dotColor3.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#000', '#fff'], // Black to white color
+    outputRange: ['#000', '#fff'], 
   });
 
   const handleSubmit = async (displayText:any, action:any) => {
-    // Trigger the animation and set analyzing state to true
+
     setIsAnalyzing(' Analyzing ');
     animateDots();
     try {
       const link = 'https://8845-115-247-147-18.ngrok-free.app'
       const response = await axios.post(link + '/process', {
         user_input: displayText,
-        action: action, // 'search' or 'generate'
+        action: action, 
       });
   
       // console.log(response.data);
   
       if (action === 'search') {
         console.log('Sentiment:', response.data.sentiment);
-        const negative = response.data?.negative; // Access 'Negative' inside 'sentiment'
-        setNegativeSentiment(negative);  // Set the Negative sentiment value in state
+        const negative = response.data?.negative; 
+        setNegativeSentiment(negative); 
         const positive = response.data?.positive;
         setPositiveSentiment(positive);
         const neutral = response.data?.neutral;
@@ -108,32 +106,31 @@ export default function Index() {
         let overall = '';
 
         if (positive > neutral && positive > negative) {
-          overall = '🟢 (good to go)';  // Positive sentiment is the highest
+          overall = '🟢 (good to go)';  
         } else if (negative > neutral && negative > positive) {
-          overall = '🔴 (red flag)';  // Negative sentiment is the highest
+          overall = '🔴 (red flag)';  
         } else if (neutral > positive && neutral > negative) {
-          overall = '🟡 (skeptical)';  // Neutral sentiment is the highest
+          overall = '🟡 (skeptical)';  
         } else if (positive === negative && positive === neutral) {
-          overall = '🟡 (skeptical)';  // In case of tie, default to neutral
+          overall = '🟡 (skeptical)'; 
         }
         setOverallSentiment(overall);
 
-        // Display the overall sentiment
         console.log('Overall Sentiment:', overallSentiment);
         if (animationLoop.current) {
-          animationLoop.current.stop(); // Stop the animation loop only if it exists
+          animationLoop.current.stop(); 
           Animated.timing(dotColor1, {
-            toValue: 0, // Reset to black
+            toValue: 0, 
             duration: 0,
             useNativeDriver: false,
           }).start();
           Animated.timing(dotColor2, {
-            toValue: 0, // Reset to black
+            toValue: 0, 
             duration: 0,
             useNativeDriver: false,
           }).start();
           Animated.timing(dotColor3, {
-            toValue: 0, // Reset to black
+            toValue: 0, 
             duration: 0,
             useNativeDriver: false,
           }).start();
@@ -156,9 +153,9 @@ export default function Index() {
         placeholder="What's on your mind?" 
         placeholderTextColor={'grey'} 
         ref={inputRef}
-        onChangeText={setInputText} // Updates state as you type
-        onSubmitEditing={(e) => handleSubmit(e.nativeEvent.text, 'search')} // Passes the input text when "Done" is pressed
-        returnKeyType="done" // Set the keyboard return key
+        onChangeText={setInputText} 
+        onSubmitEditing={(e) => handleSubmit(e.nativeEvent.text, 'search')} 
+        returnKeyType="done" 
       />
       <View style={styles.instruct}>
         <Pressable style={styles.help} onPress={() => handleSubmit('Tesla', 'search')}>
