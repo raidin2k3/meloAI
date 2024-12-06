@@ -15,6 +15,8 @@ export default function Index() {
   const [overallSentiment, setOverallSentiment] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState<string | null>(null); 
 
+  const [responseData, setResponseData] = useState<string | null>(null);
+
   const [dotColor1] = useState(new Animated.Value(0)); 
   const [dotColor2] = useState(new Animated.Value(0)); 
   const [dotColor3] = useState(new Animated.Value(0)); 
@@ -22,7 +24,7 @@ export default function Index() {
 
   
   const animateDots = () => {
-    
+  
     animationLoop.current = Animated.loop(
       Animated.sequence([
       
@@ -82,11 +84,15 @@ export default function Index() {
   });
 
   const handleSubmit = async (displayText:any, action:any) => {
-
-    setIsAnalyzing(' Analyzing ');
+    if(action=='generate'){
+      setIsAnalyzing(' Generating ')
+    }
+    else{
+      setIsAnalyzing(' Analyzing ');
+    }
     animateDots();
     try {
-      const link = 'https://8845-115-247-147-18.ngrok-free.app'
+      const link = 'https://1bb0-115-247-147-18.ngrok-free.app'
       const response = await axios.post(link + '/process', {
         user_input: displayText,
         action: action, 
@@ -116,33 +122,35 @@ export default function Index() {
         }
         setOverallSentiment(overall);
 
-        console.log('Overall Sentiment:', overallSentiment);
-        if (animationLoop.current) {
-          animationLoop.current.stop(); 
-          Animated.timing(dotColor1, {
-            toValue: 0, 
-            duration: 0,
-            useNativeDriver: false,
-          }).start();
-          Animated.timing(dotColor2, {
-            toValue: 0, 
-            duration: 0,
-            useNativeDriver: false,
-          }).start();
-          Animated.timing(dotColor3, {
-            toValue: 0, 
-            duration: 0,
-            useNativeDriver: false,
-          }).start();
-          setIsAnalyzing('')
-        }
-
+        // console.log('Overall Sentiment:', overallSentiment);
       }
       else if (action === 'generate') {
-        console.log('Generated Text:', response.data.generated_text);
+        // console.log('Generated Text:', response.data.generated_text);
+        setResponseData(response.data.generated_text);
       }
     } catch (error:any) {
       console.error('Error:', error.response ? error.response.data : error.message);
+    }
+    finally {
+      if (animationLoop.current) {
+        animationLoop.current.stop(); 
+        Animated.timing(dotColor1, {
+          toValue: 0, 
+          duration: 0,
+          useNativeDriver: false,
+        }).start();
+        Animated.timing(dotColor2, {
+          toValue: 0, 
+          duration: 0,
+          useNativeDriver: false,
+        }).start();
+        Animated.timing(dotColor3, {
+          toValue: 0, 
+          duration: 0,
+          useNativeDriver: false,
+        }).start();
+        setIsAnalyzing('')
+      }
     }
   };
 
@@ -175,21 +183,28 @@ export default function Index() {
         </Pressable>
       </View>
       <View style={styles.result}>
-        <View style={styles.resultrow}>
-          <Text style={styles.resultset}>Negative :</Text>
-          <Text style={styles.resultval}>{negativeSentiment}</Text>
+        <View style={styles.resultHolder}>
+          <View style={styles.resultrow}>
+            <Text style={styles.resultset}>Negative :</Text>
+            <Text style={styles.resultval}>{negativeSentiment}</Text>
+          </View>
+          <View style={styles.resultrow}>
+            <Text style={styles.resultset}>Positive :</Text>
+            <Text style={styles.resultval}>{positiveSentiment}</Text>
+          </View>
+          <View style={styles.resultrow}>
+            <Text style={styles.resultset}>Neutral :</Text>
+            <Text style={styles.resultval}>{neutralSentiment}</Text>
+          </View>
+          <View style={styles.resultrow}>
+            <Text style={styles.resultset}>Overall :</Text>
+            <Text style={styles.resultval}>{overallSentiment}</Text>
+          </View>
         </View>
-        <View style={styles.resultrow}>
-          <Text style={styles.resultset}>Positive :</Text>
-          <Text style={styles.resultval}>{positiveSentiment}</Text>
-        </View>
-        <View style={styles.resultrow}>
-          <Text style={styles.resultset}>Neutral :</Text>
-          <Text style={styles.resultval}>{neutralSentiment}</Text>
-        </View>
-        <View style={styles.resultrow}>
-          <Text style={styles.resultset}>Overall :</Text>
-          <Text style={styles.resultval}>{overallSentiment}</Text>
+        <View style={styles.gen}>
+          <Pressable style={styles.genText} onPress={() => handleSubmit('Google', 'generate')}>
+            <Text style={styles.helpText}>Generate</Text>
+          </Pressable>
         </View>
       </View>
       <View style={styles.loader}>
@@ -205,6 +220,11 @@ export default function Index() {
             <Animated.Text style={[styles.dots, { color: dotInterpolation2 }]}>.</Animated.Text>
             <Animated.Text style={[styles.dots, { color: dotInterpolation2 }]}>.</Animated.Text>
             <Animated.Text style={[styles.dots, { color: dotInterpolation2 }]}>.</Animated.Text>
+        </Text>
+      </View>
+      <View style={styles.genTextHolder}>
+        <Text style={styles.generatedTex}>
+          {responseData}
         </Text>
       </View>
     </View>
@@ -253,6 +273,19 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     fontSize: 12,
   },
+  genText:{
+    backgroundColor: 'white',
+    color: 'black',
+    height: 30,
+    width: 75,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  resultHolder: {
+    height: 200,
+    // backgroundColor: 'yellow',
+    width: 210,
+  },
   result:{
     margin: 5,
     height: 200,
@@ -260,13 +293,14 @@ const styles = StyleSheet.create({
     borderWidth: 0.75,
     borderColor: 'white',
     borderRadius: 15,
-    flexDirection: 'column'
+    flexDirection: 'row'
   },
   resultrow:{
     height: 50,
+    width: 205,
     textAlignVertical: 'center',
-    flexDirection: 'row'
-    // backgroundColor: 'white',
+    flexDirection: 'row',
+    // backgroundColor: 'white'
   },
   resultset:{
     color: 'grey',
@@ -283,6 +317,13 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     // backgroundColor: 'green',
   },
+  gen: {
+    height: 200,
+    // backgroundColor: 'blue',
+    width: 140,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   loader:{
     margin: 5,
     height: 25,
@@ -298,5 +339,16 @@ const styles = StyleSheet.create({
   },
   dots: {
     fontSize: 20,
+  },
+  genTextHolder: {
+    height: 280,
+    width: 350,
+    borderWidth: 0.75,
+    borderColor: 'white',
+    borderRadius: 15,
+  },
+  generatedTex: {
+    color: 'white',
+    padding: 10,
   },
 })
