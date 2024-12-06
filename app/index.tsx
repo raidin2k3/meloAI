@@ -1,12 +1,13 @@
-import { Text, View, StyleSheet, TextInput, Pressable, Keyboard, Animated } from "react-native";
+import { Text, View, StyleSheet, TextInput, Pressable, Keyboard, Animated, ScrollView } from "react-native";
 import React, { useRef , useState, useEffect } from "react";
 import axios from "axios";
+import * as Clipboard from 'expo-clipboard';
 
 export default function Index() {
   const inputRef = useRef<TextInput>(null);
 
   const [inputText, setInputText] = useState("");
-  const [displayText, setDisplayText] = useState("");
+  const [getText, setDisplayText] = useState("");
   const [sentiment, setSentiment] = useState(null); 
   const [error, setError] = useState(null);  
   const [negativeSentiment, setNegativeSentiment] = useState(null);  
@@ -83,7 +84,13 @@ export default function Index() {
     outputRange: ['#000', '#fff'], 
   });
 
+  const handleCopy = async (textToCopy:any) => {
+    await Clipboard.setStringAsync(textToCopy);
+    console.log('text copied successfully');
+  };
+
   const handleSubmit = async (displayText:any, action:any) => {
+    setDisplayText(displayText);
     if(action=='generate'){
       setIsAnalyzing(' Generating ')
     }
@@ -92,7 +99,7 @@ export default function Index() {
     }
     animateDots();
     try {
-      const link = 'https://1bb0-115-247-147-18.ngrok-free.app'
+      const link = 'https://7830-115-247-147-18.ngrok-free.app'
       const response = await axios.post(link + '/process', {
         user_input: displayText,
         action: action, 
@@ -202,7 +209,7 @@ export default function Index() {
           </View>
         </View>
         <View style={styles.gen}>
-          <Pressable style={styles.genText} onPress={() => handleSubmit('Google', 'generate')}>
+          <Pressable style={styles.genText} onPress={() => handleSubmit(getText, 'generate')}>
             <Text style={styles.helpText}>Generate</Text>
           </Pressable>
         </View>
@@ -223,9 +230,16 @@ export default function Index() {
         </Text>
       </View>
       <View style={styles.genTextHolder}>
-        <Text style={styles.generatedTex}>
-          {responseData}
-        </Text>
+        <ScrollView style = {styles.gen2}> 
+          <Text style={styles.generatedTex}>
+            {responseData}
+          </Text>
+        </ScrollView>
+      </View>
+      <View style={styles.copy}>
+        <Pressable style={styles.copyButton} onPress={() => handleCopy(responseData)}>
+          <Text style={styles.copyText}>Copy</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -325,7 +339,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   loader:{
-    margin: 5,
+    margin: 10,
     height: 25,
     width: 350,
     borderWidth: 0.75,
@@ -346,9 +360,33 @@ const styles = StyleSheet.create({
     borderWidth: 0.75,
     borderColor: 'white',
     borderRadius: 15,
+    marginBottom: 10,
+  },
+  gen2: {
+    maxHeight: '95%'
   },
   generatedTex: {
     color: 'white',
-    padding: 10,
+    padding: 15,
+  },
+  copy: {
+    height: 60,
+    width: 350,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  copyButton: {
+    height: 40,
+    width: 100,
+    backgroundColor: 'black',
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  copyText: {
+    color: 'white',
+    width: 33,
   },
 })
