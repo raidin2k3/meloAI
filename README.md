@@ -3,4 +3,4 @@ This app is made using Expo React Native and is a mobile interface for Melony re
 To run - 
    npx expo start
 
-and make sure to add the Ngrok link in the commented section line to access the backend which is a Sentiment Analysis and Text Generation Model available in the Melony repository.
+and make sure to add the Ngrok link in the commented section line to access the backend.
