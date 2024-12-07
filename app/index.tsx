@@ -99,7 +99,7 @@ export default function Index() {
     }
     animateDots();
     try {
-      const link = 'https://f3c6-115-247-147-18.ngrok-free.app'
+      const link = ''                                             // paste your ngrok link generated on melony - all_in_1.ipynb file here
       const response = await axios.post(link + '/process', {
         user_input: displayText,
         action: action, 
