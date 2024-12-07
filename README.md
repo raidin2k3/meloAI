@@ -2,7 +2,7 @@ MELONY allows you to know more about a personality/product from the eyes of a Ma
 
 The main file here is - all_in_1.ipynb which contains everything summed up for Melony
 
-What is does?
+What it does?
 1. Scraping Reddit/Youtube Comments for up to date data
 2. Sentimental Analysis
 3. Text Generation using Gemini API
