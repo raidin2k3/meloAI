@@ -99,7 +99,7 @@ export default function Index() {
     }
     animateDots();
     try {
-      const link = 'https://3d16-115-247-147-18.ngrok-free.app'
+      const link = 'https://f3c6-115-247-147-18.ngrok-free.app'
       const response = await axios.post(link + '/process', {
         user_input: displayText,
         action: action, 
