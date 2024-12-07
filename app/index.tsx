@@ -99,7 +99,7 @@ export default function Index() {
     }
     animateDots();
     try {
-      const link = 'https://7830-115-247-147-18.ngrok-free.app'
+      const link = 'https://3d16-115-247-147-18.ngrok-free.app'
       const response = await axios.post(link + '/process', {
         user_input: displayText,
         action: action, 
@@ -208,11 +208,6 @@ export default function Index() {
             <Text style={styles.resultval}>{overallSentiment}</Text>
           </View>
         </View>
-        <View style={styles.gen}>
-          <Pressable style={styles.genText} onPress={() => handleSubmit(getText, 'generate')}>
-            <Text style={styles.helpText}>Generate</Text>
-          </Pressable>
-        </View>
       </View>
       <View style={styles.loader}>
         <Text style={styles.loadertext}>
@@ -237,6 +232,9 @@ export default function Index() {
         </ScrollView>
       </View>
       <View style={styles.copy}>
+        <Pressable style={styles.genText} onPress={() => handleSubmit(getText, 'generate')}>
+          <Text style={styles.helpText}>Generate</Text>
+        </Pressable>
         <Pressable style={styles.copyButton} onPress={() => handleCopy(responseData)}>
           <Text style={styles.copyText}>Copy</Text>
         </Pressable>
@@ -290,10 +288,12 @@ const styles = StyleSheet.create({
   genText:{
     backgroundColor: 'white',
     color: 'black',
-    height: 30,
-    width: 75,
+    height: 40,
+    width: 100,
     borderRadius: 20,
-    marginRight: 8,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   resultHolder: {
     height: 200,
@@ -374,6 +374,7 @@ const styles = StyleSheet.create({
     width: 350,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row'
   },
   copyButton: {
     height: 40,
@@ -388,5 +389,6 @@ const styles = StyleSheet.create({
   copyText: {
     color: 'white',
     width: 33,
+    fontSize: 12,
   },
 })
