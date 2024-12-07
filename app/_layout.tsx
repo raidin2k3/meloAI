@@ -10,7 +10,7 @@ export default function RootLayout() {
         <Stack.Screen
           name="index"
           options={{ 
-            title: "meloAI", 
+            title: "finesseAI", 
             headerStyle: {
               backgroundColor: "black",
             },
