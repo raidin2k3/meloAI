@@ -1,6 +1,6 @@
-MELONY allows you to know more about a personality/product from the eyes of a Market specialist with the power of Machine Learning and GenAI. Stay tuned!
+MELOai allows you to know more about a personality/product from the eyes of a Market specialist with the power of Machine Learning and GenAI. Stay tuned!
 
-The main file here is - all_in_1.ipynb which contains everything summed up for Melony
+The main file here is - all_in_1.ipynb which contains everything summed up for MeloAI
 
 What it does?
 1. Scraping Reddit/Youtube Comments for up to date data
